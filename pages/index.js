@@ -73,10 +73,14 @@ export default function Index() {
         <Button
           variant="contained"
           sx={{ mb: 2 }}
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setSelectedEmployee(null); // 🔥 RESET EDIT STATE
+            setOpen(true);
+          }}
         >
           Add Employee
         </Button>
+
 
         <TextField
           fullWidth

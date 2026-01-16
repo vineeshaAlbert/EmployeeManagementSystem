@@ -84,3 +84,62 @@ body {
   backdrop-filter: blur(12px);
   border-radius: 16px;
 }
+/* ================================
+   EDIT / ADD FORM (DIALOG) – MATCH TABLE STYLE
+================================ */
+
+/* Dialog container */
+.MuiDialog-paper {
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Dialog title */
+.MuiDialogTitle-root {
+  color: #111;
+  font-weight: 600;
+}
+
+/* Dialog content */
+.MuiDialogContent-root {
+  background: transparent;
+}
+
+/* TextField input background */
+.MuiTextField-root .MuiOutlinedInput-root {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+}
+
+/* Input text */
+.MuiInputBase-input {
+  color: #111;
+}
+
+/* Label color */
+.MuiInputLabel-root {
+  color: #222;
+}
+
+/* Focused label */
+.MuiInputLabel-root.Mui-focused {
+  color: #000;
+}
+
+/* Outline border */
+.MuiOutlinedInput-notchedOutline {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Focus border */
+.MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: #000;
+}
+
+/* Dialog buttons */
+.MuiDialogActions-root {
+  padding: 16px;
+}
