@@ -10,7 +10,11 @@ import {
   Card,
   CardContent,
   TextField,
-  TablePagination
+  TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@mui/material";
 
 import EditIcon from "@mui/icons-material/Edit";
@@ -28,10 +32,16 @@ export default function Index() {
   const [employees, setEmployees] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // 🔴 Delete confirmation state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+
+  // Load employees
   const loadEmployees = async () => {
     const res = await getEmployees();
     setEmployees(res.data);
@@ -41,6 +51,7 @@ export default function Index() {
     loadEmployees();
   }, []);
 
+  // ADD / UPDATE
   const handleSave = async (data) => {
     if (selectedEmployee) {
       await updateEmployee(selectedEmployee.employeeId, data);
@@ -52,12 +63,26 @@ export default function Index() {
     loadEmployees();
   };
 
-  const handleDelete = async (id) => {
-    await deleteEmployee(id);
+  // DELETE FLOW
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    await deleteEmployee(deleteId);
+    setConfirmOpen(false);
+    setDeleteId(null);
     loadEmployees();
   };
 
-  const filtered = employees.filter(e =>
+  const handleCancelDelete = () => {
+    setConfirmOpen(false);
+    setDeleteId(null);
+  };
+
+  // SEARCH + PAGINATION
+  const filtered = employees.filter((e) =>
     e.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -70,18 +95,19 @@ export default function Index() {
     <Card sx={{ m: 3 }}>
       <CardContent>
 
+        {/* ADD BUTTON */}
         <Button
           variant="contained"
           sx={{ mb: 2 }}
           onClick={() => {
-            setSelectedEmployee(null); // 🔥 RESET EDIT STATE
+            setSelectedEmployee(null); // ✅ Reset for ADD
             setOpen(true);
           }}
         >
           Add Employee
         </Button>
 
-
+        {/* SEARCH */}
         <TextField
           fullWidth
           size="small"
@@ -91,6 +117,7 @@ export default function Index() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
+        {/* TABLE */}
         <Table>
           <TableHead>
             <TableRow>
@@ -111,16 +138,20 @@ export default function Index() {
                 <TableCell>{e.salary}</TableCell>
 
                 <TableCell>
-                  <IconButton onClick={() => {
-                    setSelectedEmployee(e);
-                    setOpen(true);
-                  }}>
+                  {/* EDIT */}
+                  <IconButton
+                    onClick={() => {
+                      setSelectedEmployee(e);
+                      setOpen(true);
+                    }}
+                  >
                     <EditIcon />
                   </IconButton>
 
+                  {/* DELETE */}
                   <IconButton
                     color="error"
-                    onClick={() => handleDelete(e.employeeId)}
+                    onClick={() => handleDeleteClick(e.employeeId)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -130,6 +161,7 @@ export default function Index() {
           </TableBody>
         </Table>
 
+        {/* PAGINATION */}
         <TablePagination
           component="div"
           count={filtered.length}
@@ -141,15 +173,35 @@ export default function Index() {
             setPage(0);
           }}
         />
-
       </CardContent>
 
+      {/* ADD / EDIT DIALOG */}
       <EmployeeDialog
         open={open}
         onClose={() => setOpen(false)}
         onSave={handleSave}
         employee={selectedEmployee}
       />
+
+      {/* DELETE CONFIRMATION DIALOG */}
+      <Dialog open={confirmOpen} onClose={handleCancelDelete}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+
+        <DialogContent>
+          Do you want to remove this employee?
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={handleCancelDelete}>No</Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmDelete}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }
